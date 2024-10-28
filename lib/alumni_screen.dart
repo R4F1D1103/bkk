@@ -9,12 +9,7 @@ class AlumniScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('BKK SMN 19 JAKARTA'),
         centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.menu),
-          onPressed: () {
-            // TODO: Implement menu functionality
-          },
-        ),
+
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -89,7 +84,6 @@ class AlumniScreen extends StatelessWidget {
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
       ),
-
     );
   }
 
@@ -113,5 +107,26 @@ class AlumniScreen extends StatelessWidget {
         backgroundColor: Colors.grey[200],
       )).toList(),
     );
+  }
+
+  void _onMenuSelected(BuildContext context, int item) {
+    switch (item) {
+      case 0:
+      // Arahkan ke halaman bookmark (atau tampilkan modal)
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Bookmark selected')),
+        );
+        break;
+      case 1:
+      // Arahkan ke halaman pengaturan
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Settings selected')),
+        );
+        break;
+      case 2:
+      // Logout
+        Navigator.pushReplacementNamed(context, '/login');
+        break;
+    }
   }
 }

@@ -1,6 +1,9 @@
 import 'package:bkk/profile_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'SplashScreen.dart';
+import 'bookmark_provider.dart';
+import 'bookmark_screen.dart';
 import 'login_screen.dart';
 import 'register_screen.dart';
 import 'job_screen.dart';
@@ -8,7 +11,13 @@ import 'inside_job_screen.dart';
 import 'alumni_screen.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => BookmarkProvider()),      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -31,6 +40,7 @@ class MyApp extends StatelessWidget {
         '/insideJob': (context) => const InsideJobScreen(),
         '/alumni': (context) => const AlumniScreen(),
         '/profile': (context) => const ProfileScreen(),
+        '/bookmark': (context) => const BookmarkScreen(),
       },
     );
   }

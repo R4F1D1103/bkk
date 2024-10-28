@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'bookmark_provider.dart'; // Provider Bookmark
 
 class JobScreen extends StatelessWidget {
   const JobScreen({Key? key}) : super(key: key);
@@ -7,13 +9,17 @@ class JobScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('BKK SMN 19 JAKARTA'),
+        title: const Text('BKK SMKN 19 JAKARTA'),
         centerTitle: true,
-        leading: IconButton(
+        leading: PopupMenuButton<int>(
           icon: const Icon(Icons.menu),
-          onPressed: () {
-            // TODO: Implement menu functionality
-          },
+          onSelected: (item) => _onMenuSelected(context, item),
+          itemBuilder: (context) => [
+            const PopupMenuItem<int>(
+              value: 0,
+              child: Text('Bookmark'),
+            ),
+          ],
         ),
       ),
       body: Column(
@@ -38,7 +44,7 @@ class JobScreen extends StatelessWidget {
             child: Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                'Start Your Job !',
+                'Start Your Job!',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
             ),
@@ -46,8 +52,8 @@ class JobScreen extends StatelessWidget {
           Expanded(
             child: ListView(
               children: [
-                _buildJobCard(context),
-                _buildJobCard(context),
+                _buildJobCard(context, '1', 'UI/UX Designer', 'PT. UTY YOGYAKARTA', 'Jakarta'),
+                _buildJobCard(context, '2', 'Backend Developer', 'PT. ABC', 'Bandung'),
               ],
             ),
           ),
@@ -70,58 +76,85 @@ class JobScreen extends StatelessWidget {
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
       ),
-
     );
   }
 
-  Widget _buildJobCard(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.pushNamed(context, '/insideJob');
-      },
-      child: Card(
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  Widget _buildJobCard(BuildContext context, String id, String title, String company, String location) {
+    final job = {'id': id, 'title': title, 'company': company, 'location': location};
+
+    return Consumer<BookmarkProvider>(
+      builder: (context, bookmarkProvider, child) {
+        bool isBookmarked = bookmarkProvider.isBookmarked(job);
+
+        return GestureDetector(
+          onTap: () {
+            Navigator.pushNamed(context, '/insideJob');
+          },
+          child: Card(
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        'UI/UX DESIGNER',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            title,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(company),
+                          Text(location),
+                        ],
                       ),
-                      Text('PT. UTY YOGYAKARTA'),
-                      Text('JAKARTA'),
+                      IconButton(
+                        icon: Icon(
+                          isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+                          color: isBookmarked ? Colors.blue : Colors.grey,
+                        ),
+                        onPressed: () {
+                          print(isBookmarked);
+                          if (isBookmarked) {
+                            bookmarkProvider.removeBookmark(job);
+                          } else {
+                            bookmarkProvider.addBookmark(job);
+                          }
+                        },
+                      ),
                     ],
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.bookmark_border),
-                    onPressed: () {
-                      // TODO: Implement bookmark functionality
-                    },
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Persyaratan Teknis:',
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
+                  const Text('• Experienced in mobile & Web Design'),
+                  const Text('• Proficient in UI/UX Software (Adobe suite, Figma, etc)'),
+                  const Text('• Detail-oriented, resourceful and is kept abreast of the...'),
+                  const SizedBox(height: 8),
+                  const Text('6 hari yang lalu'),
                 ],
               ),
-              const SizedBox(height: 8),
-              const Text(
-                'Persyaratan Teknis :',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              const Text('• Experienced in mobile & Web Design'),
-              const Text('• Proficient in UI/UX Software (Adobe suite, Figma, etc)'),
-              const Text('• Detail-oriented, resourceful and is kept abreast of the...'),
-              const SizedBox(height: 8),
-              const Text('6 hari yang lalu'),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
+  }
+
+  void _onMenuSelected(BuildContext context, int item) {
+    switch (item) {
+      case 0:
+      // Arahkan ke halaman bookmark
+        Navigator.pushNamed(context, '/bookmark');
+        break;
+    }
   }
 }
